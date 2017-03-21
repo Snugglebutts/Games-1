@@ -174,4 +174,15 @@ def game_loop():
 game_loop()
 pygame.quit()
 quit()
-    
+
+
+
+
+
+'''
+******************************************** NOTES ********************************************
+Need to figure out why each step/animation is not iterated through when holding down direction
+but it does when pressing once at a time. Does not work for up and down yet, but does for
+left and right when single iteration
+
+https://github.com/Snugglebutts/Games-1/invitations for Trent collaboration invite
