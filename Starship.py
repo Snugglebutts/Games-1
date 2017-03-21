@@ -86,10 +86,11 @@ def movement():
         if event.type==pygame.KEYUP:
             pressed=False
     treantIdle+=1
-    if treantIdle%33==0:
+    if treantIdle==30:
         treantCount=1
-    if treantIdle%70==0:
+    if treantIdle==60:
         treantCount=0
+        treantIdle=0
     draw()
 def draw():
         
@@ -163,10 +164,11 @@ def game_loop():
                     movement()
                     y_change=0
         treantIdle+=1
-        if treantIdle%33==0:
+        if treantIdle==30:
             treantCount=1
-        if treantIdle%70==0:
+        if treantIdle==60:
             treantCount=0
+            treantIdle=0
         draw()
     
    
