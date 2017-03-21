@@ -38,11 +38,11 @@ downTop = False
 
 playerImg = pygame.image.load('Wizard-front-2.png')
 
-# Arrays containing sprite animations; 'back' is the back of sprite, sprite going up; 'front' is opposite
-upSprites = ['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png']
-downSprites = ['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png']
-leftSprites = ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png']
-rightSprites = ['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']
+pressed=False
+
+# Arrays containing sprite animations; 0 is up, 1 is Down, 2 is left, 3 is right
+sprites=[['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png'],['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png'],
+         ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png'],['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']]
 
 def player(img,x,y):
     playerImg = pygame.image.load(img)
@@ -50,8 +50,8 @@ def player(img,x,y):
 
 def animation():
     global lastDir, downTop, upTop, rightTop, leftTop, downAn, upAn, rightAn, leftAn
-    global x, y, x_change, y_change, downSprites, leftSprites, upSprites, rightSprites
-    
+    global x, y, x_change, y_change, sprites,pressed
+    #Checks direction from keypressed and moves count for sprite animation
     if lastDir == 0:
         if leftTop:
             leftAn -= 1
@@ -99,30 +99,30 @@ def animation():
             x += x_change
     if y + y_change >= 0 and y + y_change <= display_height - player_height:
         y += y_change
-
+    #check for key up during animation
+    for event in pygame.event.get():
+        if event.type==pygame.KEYUP:
+            pressed=False
+    #Draws the sprites based on direction and change in x,y position      
     gameDisplay.fill(white)
     if lastDir == 0:
-        player(leftSprites[leftAn],x,y)
+        player(sprites[2][leftAn],x,y)
         
     elif lastDir == 1:
-        player(upSprites[upAn],x,y)
+        player(sprites[0][upAn],x,y)
         
     elif lastDir == 2:
-        player(rightSprites[rightAn],x,y)
+        player(sprites[3][rightAn],x,y)
 
     elif lastDir == 3:
-        player(downSprites[downAn],x,y)
-
-    #elif y_change == 0 and x_change == 0:
-    #    downAn = 2
-    #    player(downSprites[2],x,y)
+        player(sprites[1][downAn],x,y)
     
     pygame.display.update()
     clock.tick(30)
 
 def game_loop():
-    global lastdir, leftAn, rightAn, upAn, downAn, rightTop, leftTop, upTop, downTop
-    global x, y, x_change, y_change
+    global lastDir, leftAn, rightAn, upAn, downAn, rightTop, leftTop, upTop, downTop
+    global x, y, x_change, y_change, pressed
 
     # Game close boolean
     gameExit = False
@@ -132,89 +132,40 @@ def game_loop():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
-
-            '''
-            Checks if player is moving, if so, which direction
-              x_change > 0 = right
-              x_change < 0 = left
-              y_change > 0 = down
-              y_change < 0 = up
-            '''
             
-##            if x_change > 0:
-##                if rightTop:
-##                    rightAn -= 1
-##                else:
-##                    rightAn += 1
-##            elif x_change < 0:
-##                if leftTop:
-##                    leftAn -= 1
-##                else:
-##                    leftAn += 1
-##            else:
-##                if lastDir == 0:
-##                    leftAn = 1
-##                elif lastDir == 2:
-##                    rightAn = 1
-##
-##            if y_change > 0:
-##                if downTop:
-##                    downAn -= 1
-##                else:
-##                    downAn += 1
-##            elif y_change < 0:
-##                if upTop:
-##                    upAn -= 1
-##                else:
-##                    upAn += 1
-##            else:
-##                if lastDir == 1:
-##                    upAn = 1
-##                elif lastDir == 3:
-##                    downAn = 1
 
             keys = pygame.key.get_pressed()
-
-            while keys[pygame.K_LEFT] and not event.type == pygame.KEYUP:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    pressed=True
+                if event.key == pygame.K_UP:
+                    pressed=True
+                if event.key == pygame.K_RIGHT:
+                    pressed=True
+                if event.key == pygame.K_DOWN:
+                    pressed=True
+            while keys[pygame.K_LEFT] and pressed==True:
                 x_change = -5
                 lastDir = 0
                 animation()
-                                
-            while keys[pygame.K_UP]:
+                x_change=0                
+            while keys[pygame.K_UP]and pressed==True:
                 y_change = -5
                 lastDir = 1
                 animation()
+                y_change=0 
 
-            while keys[pygame.K_RIGHT]:
+            while keys[pygame.K_RIGHT]and pressed==True:
                 x_change = 5
                 lastDir = 2
                 animation()
+                x_change=0 
 
-            while keys[pygame.K_DOWN]:
+            while keys[pygame.K_DOWN]and pressed==True:
                 y_change = 5
                 lastDir = 3
                 animation()
-            
-#            if event.type == pygame.KEYDOWN:
-#                if event.key == pygame.K_LEFT:
-#                    if x > 0:
-#                        x_change = -5
-#                        lastDir = 0
-                        
-#                if event.key == pygame.K_RIGHT:
-#                    if x < display_width - player_width:
-#                        x_change = 5
-#                        lastDir = 2
-                        
-#                if event.key == pygame.K_UP:
-#                    if y > 0:
-#                        y_change = -5
-#                        lastDir = 1
-                        
-#                if event.key == pygame.K_DOWN:
-#                    if y < display_height - player_height:
-#                        y_change = 5
-#                        lastDir = 3
+                y_change=0 
                         
                 if event.key == pygame.K_ESCAPE:
                     gameExit = True
@@ -225,15 +176,6 @@ def game_loop():
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     y_change = 0
 
-#        if x >= display_width - player_width or x <= 0:
-#            x_change = 0
-#        if y > display_height - player_height or y < 0:
-#            y_change = 0
-
-        print("X: " + str(x) + "; x_change: " + str(x_change))
-        print("Y: " + str(y) + "; y_change: " + str(y_change))
-        tempx = x
-        tempy = y
         
 
 game_loop()
@@ -246,8 +188,5 @@ quit()
 
 '''
 ******************************************** NOTES ********************************************
-Need to figure out why each step/animation is not iterated through when holding down direction
-but it does when pressing once at a time. Does not work for up and down yet, but does for
-left and right when single iteration
-https://github.com/Snugglebutts/Games-1/invitations for Trent collaboration invite
+Animation works now, except you cant hold down button and switch directions immediately 
 '''
