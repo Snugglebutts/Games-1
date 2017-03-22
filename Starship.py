@@ -39,6 +39,10 @@ playerImg = pygame.image.load('Wizard-front-2.png')
 
 pressed=False
 doubleKey=False
+left=False
+right=False
+up=False
+down=False
 # Arrays containing sprite animations; 0 is up, 1 is Down, 2 is left, 3 is right
 sprites=[['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png'],['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png'],
          ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png'],['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']]
@@ -52,7 +56,8 @@ def player(img,x,y):
 
 def movement():
     global lastDir, stepCount, an,treantIdle,treantCount
-    global x, y, x_change, y_change, sprites,pressed, doubleKey
+    global x, y, x_change, y_change, sprites,pressed
+    global right,left,up,down
     #Count for walk animation
     stepCount+=1
     if stepCount==5:
@@ -73,25 +78,25 @@ def movement():
         if event.type==pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 pressed=True
-                lastDir=0
+                left=True
             if event.key == pygame.K_UP:
                 pressed=True
-                lastDir=1
+                up=True
             if event.key == pygame.K_RIGHT:
                 pressed=True
-                lastDir=2
+                right=True
             if event.key == pygame.K_DOWN:
                 pressed=True
-                lastDir = 3
+                down=True
         if event.type==pygame.KEYUP:
-            if lastDir==0 and event.key == pygame.K_LEFT:
-                pressed=False
-            if lastDir==1 and event.key == pygame.K_UP:
-                pressed=False
-            if lastDir==2 and event.key == pygame.K_RIGHT:
-                pressed=False
-            if lastDir==3 and event.key == pygame.K_DOWN:
-                pressed=False
+            if  left and event.key == pygame.K_LEFT:
+                left=False
+            if up and event.key == pygame.K_UP:
+                up=False
+            if right and event.key == pygame.K_RIGHT:
+                right=False
+            if down and event.key == pygame.K_DOWN:
+                down=False
         
     treantIdle+=1
     if treantIdle==30:
@@ -109,23 +114,33 @@ def draw():
             gameDisplay.blit(back,(i*32,z*32))
     #Draws the sprites based on direction and change in x,y position  
     treant(treantSprite[treantCount])
-    if lastDir == 0:
+    if left:
         player(sprites[2][an],x,y)
         
-    elif lastDir == 1:
+    elif up:
         player(sprites[0][an],x,y)
         
-    elif lastDir == 2:
+    elif right:
         player(sprites[3][an],x,y)
 
-    elif lastDir == 3:
+    elif down:
         player(sprites[1][an],x,y)
+    else:
+        if lastDir==0:
+            player(sprites[2][an],x,y)
+        if lastDir==1:
+            player(sprites[0][an],x,y)
+        if lastDir==2:
+            player(sprites[3][an],x,y)
+        if lastDir==3:
+            player(sprites[1][an],x,y)
     
     pygame.display.update()
     clock.tick(30)
     
 def game_loop():
-    global lastDir, x_change, y_change, pressed,treantIdle,treantCount,doubleKey
+    global lastDir, x_change, y_change, pressed,treantIdle,treantCount
+    global right,left,up,down
 
     # Game close boolean
     gameExit = False
@@ -141,36 +156,44 @@ def game_loop():
                     gameExit = True
                 if event.key == pygame.K_LEFT:
                     pressed=True
-                    lastDir=0
+                    left=True
+                    
                 if event.key == pygame.K_UP:
+                    up=True
                     pressed=True
                     lastDir=1
                 if event.key == pygame.K_RIGHT:
                     pressed=True
+                    right=True
                     lastDir=2
                 if event.key == pygame.K_DOWN:
                     pressed=True
-                    lastDir = 3
+                    down=True
+                    lastDir=3
         #use a loop for button pressses, needed for long presses
             while pressed==True:
-                if lastDir == 0:
+                if left:
                     x_change = -5
                     movement()
                     x_change=0
-                if lastDir == 1:
+                    lastDir=0
+                elif up:
                     y_change = -5
                     movement()
                     y_change=0 
-
-                if lastDir == 2:
+                    lastDir=1
+                elif right:
                     x_change = 5
                     movement()
                     x_change=0 
-
-                if lastDir == 3:
+                    lastDir=2
+                elif down:
                     y_change = 5
                     movement()
                     y_change=0
+                    lastDir=3
+                else:
+                    pressed=False
         treantIdle+=1
         if treantIdle==30:
             treantCount=1
