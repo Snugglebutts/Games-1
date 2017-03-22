@@ -31,14 +31,14 @@ y_change = 0
 
 lastDir = 3 # 0 = left, 1 = up, 2 = right, 3 = down
 # Sprite animation step count once it reaches three set topCount to true and go down
-topCount = False
+stepCount = 0
 an = 0
 treantIdle=0
 treantCount=0
 playerImg = pygame.image.load('Wizard-front-2.png')
 
 pressed=False
-
+doubleKey=False
 # Arrays containing sprite animations; 0 is up, 1 is Down, 2 is left, 3 is right
 sprites=[['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png'],['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png'],
          ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png'],['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']]
@@ -51,17 +51,17 @@ def player(img,x,y):
     gameDisplay.blit(playerImg,(x,y))
 
 def movement():
-    global lastDir, topCount, an,treantIdle,treantCount
-    global x, y, x_change, y_change, sprites,pressed
-    #Checks direction from keypressed and moves count for sprite animation
-    if topCount:
-        an -= 1
-    else:
-        an += 1
-    if an==2:
-        topCount=True
-    elif an==0:
-        topCount=False
+    global lastDir, stepCount, an,treantIdle,treantCount
+    global x, y, x_change, y_change, sprites,pressed, doubleKey
+    #Count for walk animation
+    stepCount+=1
+    if stepCount==5:
+        an=0
+    if stepCount==10:
+        an=1
+    if stepCount==15:
+        an=2
+        stepCount=0
     # Movement for the player
     if x + x_change >= 0 and x + x_change <= display_width - player_width:
             x += x_change
@@ -84,7 +84,15 @@ def movement():
                 pressed=True
                 lastDir = 3
         if event.type==pygame.KEYUP:
-            pressed=False
+            if lastDir==0 and event.key == pygame.K_LEFT:
+                pressed=False
+            if lastDir==1 and event.key == pygame.K_UP:
+                pressed=False
+            if lastDir==2 and event.key == pygame.K_RIGHT:
+                pressed=False
+            if lastDir==3 and event.key == pygame.K_DOWN:
+                pressed=False
+        
     treantIdle+=1
     if treantIdle==30:
         treantCount=1
@@ -117,7 +125,7 @@ def draw():
     clock.tick(30)
     
 def game_loop():
-    global lastDir, x_change, y_change, pressed,treantIdle,treantCount
+    global lastDir, x_change, y_change, pressed,treantIdle,treantCount,doubleKey
 
     # Game close boolean
     gameExit = False
