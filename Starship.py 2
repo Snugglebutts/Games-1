@@ -1,4 +1,5 @@
 import pygame
+import random
 import math
 
 pygame.init()
@@ -16,20 +17,13 @@ blue = (0,0,255)
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption('StarShooter')
-playerImg = pygame.image.load('Wizard-front-2.png')
-pygame.display.set_icon(playerImg) 
 clock = pygame.time.Clock()
 
-back = pygame.image.load('Sand-5.png').convert()
-for i in range(math.floor(display_width / 32) + 1):
-    for z in range(math.floor(display_height / 32) + 1):
-        gameDisplay.blit(back,(i*32,z*32))
-pygame.display.update()
-
-print("done")
 #value for player position
 x = (display_width * 0.45)
 y = (display_height * 0.8)
+randx=0
+randy=0
 
 #value for speed/direction
 x_change = 0
@@ -37,37 +31,37 @@ y_change = 0
 
 lastDir = 3 # 0 = left, 1 = up, 2 = right, 3 = down
 # Sprite animation step count once it reaches three set topCount to true and go down
-topCount = False
+stepCount = 0
 an = 0
-
-#background('sand-5.png')
+treantIdle=0
+treantCount=0
+playerImg = pygame.image.load('Wizard-front-2.png')
 
 pressed=False
-
+doubleKey=False
 # Arrays containing sprite animations; 0 is up, 1 is Down, 2 is left, 3 is right
 sprites=[['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png'],['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png'],
          ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png'],['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']]
-
+treantSprite=['Treent-front-1.png','Treent-front-2.png']
+def treant(img):
+    treantImg=pygame.image.load(img)
+    gameDisplay.blit(treantImg,(400,350))
 def player(img,x,y):
     playerImg = pygame.image.load(img)
     gameDisplay.blit(playerImg,(x,y))
 
-def background(img,x,y):
-    back = pygame.image.load(img)
-    gameDisplay.blit(back,(x,y))
-
-def animation():
-    global lastDir, topCount, an
-    global x, y, x_change, y_change, sprites,pressed
-    #Checks direction from keypressed and moves count for sprite animation
-    if topCount:
-        an -= 1
-    else:
-        an += 1
-    if an==2:
-        topCount=True
-    elif an==0:
-        topCount=False
+def movement():
+    global lastDir, stepCount, an,treantIdle,treantCount
+    global x, y, x_change, y_change, sprites,pressed, doubleKey
+    #Count for walk animation
+    stepCount+=1
+    if stepCount==5:
+        an=0
+    if stepCount==10:
+        an=1
+    if stepCount==15:
+        an=2
+        stepCount=0
     # Movement for the player
     if x + x_change >= 0 and x + x_change <= display_width - player_width:
             x += x_change
@@ -90,13 +84,31 @@ def animation():
                 pressed=True
                 lastDir = 3
         if event.type==pygame.KEYUP:
-            pressed=False
-    #Draws the sprites based on direction and change in x,y position
-#   gameDisplay.fill(white)
+            if lastDir==0 and event.key == pygame.K_LEFT:
+                pressed=False
+            if lastDir==1 and event.key == pygame.K_UP:
+                pressed=False
+            if lastDir==2 and event.key == pygame.K_RIGHT:
+                pressed=False
+            if lastDir==3 and event.key == pygame.K_DOWN:
+                pressed=False
+        
+    treantIdle+=1
+    if treantIdle==30:
+        treantCount=1
+    if treantIdle==60:
+        treantCount=0
+        treantIdle=0
+    draw()
+def draw():
+        
+    #background
     back = pygame.image.load('Sand-5.png').convert()
     for i in range(math.floor(display_width / 32) + 1):
         for z in range(math.floor(display_height / 32) + 1):
             gameDisplay.blit(back,(i*32,z*32))
+    #Draws the sprites based on direction and change in x,y position  
+    treant(treantSprite[treantCount])
     if lastDir == 0:
         player(sprites[2][an],x,y)
         
@@ -111,9 +123,9 @@ def animation():
     
     pygame.display.update()
     clock.tick(30)
-
+    
 def game_loop():
-    global lastDir, x_change, y_change, pressed
+    global lastDir, x_change, y_change, pressed,treantIdle,treantCount,doubleKey
 
     # Game close boolean
     gameExit = False
@@ -143,23 +155,36 @@ def game_loop():
             while pressed==True:
                 if lastDir == 0:
                     x_change = -5
-                    animation()
+                    movement()
                     x_change=0
                 if lastDir == 1:
                     y_change = -5
-                    animation()
+                    movement()
                     y_change=0 
 
                 if lastDir == 2:
                     x_change = 5
-                    animation()
+                    movement()
                     x_change=0 
 
                 if lastDir == 3:
                     y_change = 5
-                    animation()
-                    y_change=0 
+                    movement()
+                    y_change=0
+        treantIdle+=1
+        if treantIdle==30:
+            treantCount=1
+        if treantIdle==60:
+            treantCount=0
+            treantIdle=0
+        draw()
+    
+   
+
                         
+
+        
+
 game_loop()
 pygame.quit()
 quit()
@@ -170,5 +195,7 @@ quit()
 
 '''
 ******************************************** NOTES ********************************************
-Animation works now, except you cant hold down button and switch directions immediately 
+Added global variable Treant_rect and TreantImg to determine where the Treant is located. When
+Treant is higher than player, player is printed after. If Treant is lower, Treant is printed after
+making player behind Treant
 '''
