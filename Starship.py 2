@@ -35,24 +35,46 @@ stepCount = 0
 an = 0
 treantIdle=0
 treantCount=0
+treantImg = pygame.image.load('Treent-front-1.png')
+treant_rect = treantImg.get_rect()
 playerImg = pygame.image.load('Wizard-front-2.png')
 
 pressed=False
 doubleKey=False
+attack=False
 # Arrays containing sprite animations; 0 is up, 1 is Down, 2 is left, 3 is right
 sprites=[['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png'],['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png'],
          ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png'],['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']]
 treantSprite=['Treent-front-1.png','Treent-front-2.png']
 def treant(img):
+    global treant_rect, treantImg
     treantImg=pygame.image.load(img)
     gameDisplay.blit(treantImg,(400,350))
+    treant_rect = treantImg.get_rect()
+    treant_rect.x = 400
+    treant_rect.y = 350
+
+def projectile(img,x,y):
+    global attack, lastDir
+    projectileImg = pygame.image.load(img)
+    x_temp = x
+    y_temp = y
+    if lastDir == 0:
+        projectileImg = pygame.transform.rotate(projectileImg, 180)
+        gameDisplay.blit(projectileImg,(x,y))
+        for x in range(1, 30):
+            #draw()
+            x_temp -= 5
+            gameDisplay.blit(projectileImg,(x_temp,y_temp))
+            pygame.display.update()
+                
 def player(img,x,y):
     playerImg = pygame.image.load(img)
     gameDisplay.blit(playerImg,(x,y))
 
 def movement():
-    global lastDir, stepCount, an,treantIdle,treantCount
-    global x, y, x_change, y_change, sprites,pressed, doubleKey
+    global lastDir, stepCount, an, treantIdle, treantCount, attack
+    global x, y, x_change, y_change, sprites, pressed, doubleKey
     #Count for walk animation
     stepCount+=1
     if stepCount==5:
@@ -83,6 +105,11 @@ def movement():
             if event.key == pygame.K_DOWN:
                 pressed=True
                 lastDir = 3
+            if event.key == pygame.K_SPACE:
+                print("Space pressed")
+                attack = True
+                projectileImg = pygame.image.load("Red Projectile.png")
+                projectile("Red Projectile.png",x,y)
         if event.type==pygame.KEYUP:
             if lastDir==0 and event.key == pygame.K_LEFT:
                 pressed=False
@@ -101,14 +128,15 @@ def movement():
         treantIdle=0
     draw()
 def draw():
-        
+    global treant_rect
     #background
     back = pygame.image.load('Sand-5.png').convert()
     for i in range(math.floor(display_width / 32) + 1):
         for z in range(math.floor(display_height / 32) + 1):
             gameDisplay.blit(back,(i*32,z*32))
     #Draws the sprites based on direction and change in x,y position  
-    treant(treantSprite[treantCount])
+    if y > treant_rect.y:
+        treant(treantSprite[treantCount])
     if lastDir == 0:
         player(sprites[2][an],x,y)
         
@@ -120,7 +148,9 @@ def draw():
 
     elif lastDir == 3:
         player(sprites[1][an],x,y)
-    
+
+    if y <= treant_rect.y:
+        treant(treantSprite[treantCount])
     pygame.display.update()
     clock.tick(30)
     
@@ -178,12 +208,6 @@ def game_loop():
             treantCount=0
             treantIdle=0
         draw()
-    
-   
-
-                        
-
-        
 
 game_loop()
 pygame.quit()
@@ -195,7 +219,5 @@ quit()
 
 '''
 ******************************************** NOTES ********************************************
-Added global variable Treant_rect and TreantImg to determine where the Treant is located. When
-Treant is higher than player, player is printed after. If Treant is lower, Treant is printed after
-making player behind Treant
+Animation works now, except you cant hold down button and switch directions immediately 
 '''
