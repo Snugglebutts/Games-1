@@ -39,18 +39,19 @@ stepCount = 0
 petStepCount = 0
 petAn = 0 
 an = 0
-proLen=160
-temp_direction=0
+proLen=[]
+temp_direction=[]
 treantIdle=0
 treantCount=0
 treantImg = pygame.image.load('Treent-front-1.png')
 treant_rect = treantImg.get_rect()
 playerImg = pygame.image.load('Wizard-front-2.png')
 petImg = pygame.image.load('Duck-right-2.png')
-
+lastPos=[]
 pressed=False
 doubleKey=False
 attack=False
+
 # Arrays containing sprite animations; 0 is up, 1 is Down, 2 is left, 3 is right
 sprites=[['Wizard-back-1.png','Wizard-back-2.png','Wizard-back-3.png'],['Wizard-front-1.png','Wizard-front-2.png','Wizard-front-3.png'],
          ['Wizard-left-1.png','Wizard-left-2.png','Wizard-left-3.png'],['Wizard-right-1.png','Wizard-right-2.png','Wizard-right-3.png']]
@@ -83,7 +84,7 @@ def pet(img,x,y):
 def movement():
     global lastDir, stepCount, an, treantIdle, treantCount, attack, pressed
     global x, y, x_change, y_change, sprites, pressed, doubleKey, petStepCount
-    global pet_width, pet_height, pet_x, pet_y, petAn,randx,randy,proLen,temp_direction
+    global pet_width, pet_height, pet_x, pet_y, petAn,randx,randy,proLen,temp_direction,lastPos
 
     pet_x_change = x_change
     pet_y_change = y_change
@@ -148,7 +149,7 @@ def movement():
             if event.key == pygame.K_DOWN:
                 pressed=True
                 lastDir = 3
-            if event.key == pygame.K_SPACE and not attack:
+            if event.key == pygame.K_SPACE:
                     if lastDir==1:
                         randx=x+30
                         randy = y - 25
@@ -161,9 +162,13 @@ def movement():
                     if lastDir==2:
                         randx=x+25
                         randy = y + 5
+                    lastXY=[]
+                    lastXY.append(randx)
+                    lastXY.append(randy)
+                    lastPos.append(lastXY)
+                    temp_direction.append(lastDir)
+                    proLen.append(0)
                     
-                    proLen=0
-                    temp_direction=lastDir
                     attack=True
         if event.type==pygame.KEYUP:
             if lastDir==0 and event.key == pygame.K_LEFT:
@@ -182,7 +187,7 @@ def movement():
         treantIdle=0
     draw()
 def draw():
-    global treant_rect, attack,randx,randy,proLen
+    global treant_rect, attack,randx,randy,proLen,lastPos
     #background
     back = pygame.image.load('Sand-5.png').convert()
     for i in range(math.floor(display_width / 32) + 1):
@@ -191,26 +196,30 @@ def draw():
     #Draws the sprites based on direction and change in x,y position  
     if y > treant_rect.y:
         treant(treantSprite[treantCount])
-    if proLen<150:
-        proj = pygame.image.load('Red Projectile Narrow.png')
-        if temp_direction==0:
-            randx -= 10
-            proj = pygame.transform.rotate(proj, 180)
-        elif temp_direction==1:
-            randy-=10
-            proj = pygame.transform.rotate(proj, 90)
-        elif temp_direction==2:
-            randx+=10
-        elif temp_direction==3:
-            randy+=10
-            proj = pygame.transform.rotate(proj, 270)
-        proLen+=5
+    tempnum=0  
+    for project in lastPos:
+        if proLen[tempnum]<150:
+            proj = pygame.image.load('Red Projectile Narrow.png')
+            if temp_direction[tempnum]==0:
+                lastPos[tempnum][0] -= 10
+                proj = pygame.transform.rotate(proj, 180)
+            elif temp_direction[tempnum]==1:
+                lastPos[tempnum][1]-=10
+                proj = pygame.transform.rotate(proj, 90)
+            elif temp_direction[tempnum]==2:
+                lastPos[tempnum][0]+=10
+            elif temp_direction[tempnum]==3:
+                lastPos[tempnum][1]+=10
+                proj = pygame.transform.rotate(proj, 270)
+            proLen[tempnum]+=5
         
-        projectile(proj,randx,randy)
-        print("Here")
-    else:
-        attack=False
-        
+            projectile(proj,lastPos[tempnum][0],lastPos[tempnum][1])
+            print("Here")
+        else:
+            del lastPos[tempnum]
+            del temp_direction[tempnum]
+            del proLen[tempnum]
+        tempnum+=1
     if lastDir == 0:
 ## Draws projectile (poking stick) if facing left and pressing space
 ## Need to figure out how to keep animation smooth
