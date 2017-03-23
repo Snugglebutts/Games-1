@@ -40,6 +40,7 @@ petStepCount = 0
 petAn = 0 
 an = 0
 proLen=160
+temp_direction=0
 treantIdle=0
 treantCount=0
 treantImg = pygame.image.load('Treent-front-1.png')
@@ -82,7 +83,7 @@ def pet(img,x,y):
 def movement():
     global lastDir, stepCount, an, treantIdle, treantCount, attack, pressed
     global x, y, x_change, y_change, sprites, pressed, doubleKey, petStepCount
-    global pet_width, pet_height, pet_x, pet_y, petAn,randx,randy,proLen
+    global pet_width, pet_height, pet_x, pet_y, petAn,randx,randy,proLen,temp_direction
 
     pet_x_change = x_change
     pet_y_change = y_change
@@ -147,10 +148,23 @@ def movement():
             if event.key == pygame.K_DOWN:
                 pressed=True
                 lastDir = 3
-            if event.key == pygame.K_SPACE:
-                randx = x - 25
-                randy = y + 5
-                proLen=0
+            if event.key == pygame.K_SPACE and not attack:
+                    if lastDir==1:
+                        randx=x+30
+                        randy = y - 25
+                    if lastDir==3:
+                        randx=x+5
+                        randy=y + 25
+                    if lastDir==0:
+                        randx = x - 25
+                        randy = y + 5
+                    if lastDir==2:
+                        randx=x+25
+                        randy = y + 5
+                    
+                    proLen=0
+                    temp_direction=lastDir
+                    attack=True
         if event.type==pygame.KEYUP:
             if lastDir==0 and event.key == pygame.K_LEFT:
                 pressed=False
@@ -168,7 +182,7 @@ def movement():
         treantIdle=0
     draw()
 def draw():
-    global treant_rect, attack,randx,proLen
+    global treant_rect, attack,randx,randy,proLen
     #background
     back = pygame.image.load('Sand-5.png').convert()
     for i in range(math.floor(display_width / 32) + 1):
@@ -178,12 +192,24 @@ def draw():
     if y > treant_rect.y:
         treant(treantSprite[treantCount])
     if proLen<150:
-                randx -= 10
-                proLen+=5
-                proj = pygame.image.load('Red Projectile Narrow.png')
-                proj = pygame.transform.rotate(proj, 180)
-                projectile(proj,randx,randy)
-                print("Here")
+        proj = pygame.image.load('Red Projectile Narrow.png')
+        if temp_direction==0:
+            randx -= 10
+            proj = pygame.transform.rotate(proj, 180)
+        elif temp_direction==1:
+            randy-=10
+            proj = pygame.transform.rotate(proj, 90)
+        elif temp_direction==2:
+            randx+=10
+        elif temp_direction==3:
+            randy+=10
+            proj = pygame.transform.rotate(proj, 270)
+        proLen+=5
+        
+        projectile(proj,randx,randy)
+        print("Here")
+    else:
+        attack=False
         
     if lastDir == 0:
 ## Draws projectile (poking stick) if facing left and pressing space
@@ -208,7 +234,7 @@ def draw():
     clock.tick(30)
     
 def game_loop():
-    global lastDir, x_change, y_change, pressed,treantIdle,attack,treantCount,doubleKey
+    global lastDir, x_change, y_change, pressed,treantIdle,attack,treantCount,doubleKey,attack
 
     # Game close boolean
     gameExit = False
