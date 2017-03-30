@@ -4,8 +4,9 @@ import random
 
 import pygame
 from pygame.locals import *
-from Engine import misc,characters
-characters=characters.characters()
+from Engine import misc, characters
+characters = characters.characters()
+
 # The Main Menu object. Accepts no parameters to its constructor
 class Menu(object):
     def __init__(self):
@@ -67,20 +68,20 @@ class Menu(object):
         self.buttons.blit(self.loadButton, (self.loadButtonX, self.loadButtonY))
         self.buttons.blit(self.settingsButton, (self.settingsButtonX, self.settingsButtonY))
         self.buttons.blit(self.exitButton, (self.exitButtonX, self.exitButtonY))
-        #self.buttons.blit(self.startButton, (int(self.screen.get_width() / 2)-100, int(self.screen.get_height()/3)-25))
-        #self.startButtonRect = self.startButton.get_rect()
-
+        
     def menuAnimation(self):
         self.background.blit(self.backgroundImg1, (0,0))
         self.foreground.blit(self.foregroundImg.convert_alpha(), (self.cloudx, 0))
         self.foreground.blit(self.foregroundImg2.convert_alpha(), (self.cloudx + self.foregroundImg.get_width(), 0))
         self.background.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .20))
+
         self.midground.blit(self.midgroundImg, (0,0))
+
         self.buttons.blit(self.startButton, (self.startButtonRect.x, self.startButtonRect.y))
         self.buttons.blit(self.loadButton, (self.loadButtonX, self.loadButtonY))
         self.buttons.blit(self.settingsButton, (self.settingsButtonX, self.settingsButtonY))
         self.buttons.blit(self.exitButton, (self.exitButtonX, self.exitButtonY))
-        #self.buttons.blit(self.startButton, (self.startButtonRect.x, self.startButtonRect.y))
+
         self.cloudx -= 0.5
 
         if self.cloudx < 0 - self.foregroundImg.get_width():
@@ -103,23 +104,34 @@ class Menu(object):
             if e.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if x >= self.startButtonRect.x and x <= self.startButtonRect.x + 200 and y >= self.startButtonRect.y and y <= self.startButtonRect.y + 50:
+                    self.startButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Start-Button-Pressed.png").convert_alpha()
                     print("Start button pressed")
                 if x >= self.loadButtonRect.x and x <= self.loadButtonRect.x + 200 and y >= self.loadButtonRect.y and y <= self.loadButtonRect.y + 50:
+                    self.loadButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Load-Button-Pressed.png").convert_alpha()
                     print(characters.load())
                 if x >= self.settingsButtonRect.x and x <= self.settingsButtonRect.x + 200 and y >= self.settingsButtonRect.y and y <= self.settingsButtonRect.y + 50:
+                    self.settingsButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Settings-Button-Pressed.png").convert_alpha()
                     print("Settings button pressed")
                 if x >= self.exitButtonRect.x and x <= self.exitButtonRect.x + 200 and y >= self.exitButtonRect.y and y <= self.exitButtonRect.y + 50:
+                    self.exitButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Exit-Button-Pressed.png").convert_alpha()
                     print("Exit button pressed")
+
+            if e.type == pygame.MOUSEBUTTONUP:
+                x, y = pygame.mouse.get_pos()
+                self.startButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Start-Button.png").convert_alpha()
+                self.loadButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Load-Button.png").convert_alpha()
+                self.settingsButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Settings-Button.png").convert_alpha()    
+                self.exitButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Exit-Button.png").convert_alpha()
+                if x >= self.startButtonRect.x and x <= self.startButtonRect.x + 200 and y >= self.startButtonRect.y and y <= self.startButtonRect.y + 50:
+                    print("Start button released")
+                if x >= self.loadButtonRect.x and x <= self.loadButtonRect.x + 200 and y >= self.loadButtonRect.y and y <= self.loadButtonRect.y + 50:
+                    print("Load button released")
+                if x >= self.settingsButtonRect.x and x <= self.settingsButtonRect.x + 200 and y >= self.settingsButtonRect.y and y <= self.settingsButtonRect.y + 50:
+                    print("Settings button released")
+                if x >= self.exitButtonRect.x and x <= self.exitButtonRect.x + 200 and y >= self.exitButtonRect.y and y <= self.exitButtonRect.y + 50:
                     pygame.quit()
                     sys.exit(0)
-                    
                 
-                print("Pos: " + str(x) + "," + str(y))
-                
-                # RETURNS COORDINATES OF MOUSE PRESS
-                # NEED TO CREATE A MENU FOR PLAYER TO CHOOSE
-                # If P == [newGameButtonX, NewGameButtonY]:
-                #       newGame = True
                 
     # Main loop. Continues until it's time to move on
     def run(self):
@@ -128,12 +140,8 @@ class Menu(object):
 
         # Clears screen to show next step in animation
         self.screen.fill((0,0,0))
-
-        #self.background.blit(self.backgroundImg1, (0,0))
-        #self.background.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .20))
-        #self.midground.blit(self.midgroundImg, (0,0))
         self.menuAnimation()
-        #self.buttons.blit(self.startButton, (int(self.screen.get_width() / 2)-100, int(self.screen.get_height()/3)-25))
+
         pygame.display.update()
         self.clock.tick(60)
 
