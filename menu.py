@@ -7,6 +7,7 @@ from pygame.locals import *
 from Engine import misc,characters
 characters=characters.characters()
 buttonCheck=0
+pressed=[False,False,False,False]
 # The Main Menu object. Accepts no parameters to its constructor
 class Menu(object):
     def __init__(self):
@@ -36,7 +37,6 @@ class Menu(object):
         self.foreground = pygame.display.get_surface()
         self.cloudx = 0
 
-
     def menu_create(self,img):
         global buttonCheck
         XY=[]
@@ -62,10 +62,22 @@ class Menu(object):
         self.foreground.blit(self.foregroundImg2.convert_alpha(), (self.cloudx + self.foregroundImg.get_width(), 0))
         self.background.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .20))
         self.midground.blit(self.midgroundImg, (0,0))
-        self.menu_create("Resources/Interface/Start Menu/Buttons/Start-Button.png")
-        self.menu_create("Resources/Interface/Start Menu/Buttons/Load-Button.png")
-        self.menu_create("Resources/Interface/Start Menu/Buttons/Settings-Button.png")
-        self.menu_create("Resources/Interface/Start Menu/Buttons/Exit-Button.png")
+        if pressed[0]:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Start-Button-Pressed.png")
+        else:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Start-Button.png")
+        if pressed[1]:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Load-Button-Pressed.png")
+        else:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Load-Button.png")
+        if pressed[2]:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Settings-Button-Pressed.png")
+        else:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Settings-Button.png")
+        if pressed[3]:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Exit-Button-Pressed.png")
+        else:
+            self.menu_create("Resources/Interface/Start Menu/Buttons/Exit-Button.png")
         #self.buttons.blit(self.startButton, (self.startButtonRect.x, self.startButtonRect.y))
         self.cloudx -= 0.5
 
@@ -74,6 +86,7 @@ class Menu(object):
         buttonCheck=0
 
     def keyListener(self):
+        global pressed
         P = pygame.mouse.get_pos()
         keys = pygame.key.get_pressed()
 
@@ -90,6 +103,22 @@ class Menu(object):
             if e.type == pygame.MOUSEBUTTONDOWN:
                 x, y = pygame.mouse.get_pos()
                 if x >= self.buttonXY[0][0] and x <= self.buttonXY[0][0]+ 200 and y >= self.buttonXY[0][1] and y <= self.buttonXY[0][1]+50:
+                    pressed[0]=True
+                    print("Start button pressed")
+                if x >= self.buttonXY[1][0] and x <= self.buttonXY[1][0] + 200 and y >= self.buttonXY[1][1] and y <= self.buttonXY[1][1] + 50:
+                    pressed[1]=True
+                    print(characters.load())
+                if x >= self.buttonXY[2][0] and x <= self.buttonXY[2][0] + 200 and y >= self.buttonXY[2][1] and y <= self.buttonXY[2][1] + 50:
+                    pressed[2]=True
+                    print("Settings button pressed")
+                if x >= self.buttonXY[3][0] and x <= self.buttonXY[3][0] + 200 and y >= self.buttonXY[3][1]and y <= self.buttonXY[3][1] + 50:
+                    pressed[3]=True
+                    print("Exit button pressed")
+                    pygame.quit()
+                    sys.exit(0)
+            if e.type == pygame.MOUSEBUTTONUP:
+                x, y = pygame.mouse.get_pos()
+                if x >= self.buttonXY[0][0] and x <= self.buttonXY[0][0]+ 200 and y >= self.buttonXY[0][1] and y <= self.buttonXY[0][1]+50:
                     print("Start button pressed")
                 if x >= self.buttonXY[1][0] and x <= self.buttonXY[1][0] + 200 and y >= self.buttonXY[1][1] and y <= self.buttonXY[1][1] + 50:
                     print(characters.load())
@@ -99,7 +128,10 @@ class Menu(object):
                     print("Exit button pressed")
                     pygame.quit()
                     sys.exit(0)
-                    
+                tempCount=0
+                for boo in pressed:
+                    pressed[tempCount]=False
+                    tempCount+=1
                 
                 print("Pos: " + str(x) + "," + str(y))
                 print(self.buttonXY)
