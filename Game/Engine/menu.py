@@ -4,8 +4,8 @@ import random
 
 import pygame
 from pygame.locals import *
-from Engine import misc
-
+from Engine import misc,characters
+characters=characters.characters()
 # The Main Menu object. Accepts no parameters to its constructor
 class Menu(object):
     def __init__(self):
@@ -105,7 +105,7 @@ class Menu(object):
                 if x >= self.startButtonRect.x and x <= self.startButtonRect.x + 200 and y >= self.startButtonRect.y and y <= self.startButtonRect.y + 50:
                     print("Start button pressed")
                 if x >= self.loadButtonRect.x and x <= self.loadButtonRect.x + 200 and y >= self.loadButtonRect.y and y <= self.loadButtonRect.y + 50:
-                    print("Load button pressed")
+                    print(characters.load())
                 if x >= self.settingsButtonRect.x and x <= self.settingsButtonRect.x + 200 and y >= self.settingsButtonRect.y and y <= self.settingsButtonRect.y + 50:
                     print("Settings button pressed")
                 if x >= self.exitButtonRect.x and x <= self.exitButtonRect.x + 200 and y >= self.exitButtonRect.y and y <= self.exitButtonRect.y + 50:
