@@ -36,41 +36,6 @@ class Menu(object):
         self.foreground = pygame.display.get_surface()
         self.cloudx = 0
 
-        self.startButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Start-Button.png").convert_alpha()
-        self.startButtonX = int(self.screen.get_width() / 2) - 100
-        self.startButtonY = int(self.screen.get_height() / 3) - 25
-        self.startButtonWidth = self.startButton.get_width()
-        self.startButtonHeight = self.startButton.get_height()
-        self.startButtonRect = pygame.Rect(self.startButtonX, self.startButtonY, self.startButtonWidth, self.startButtonHeight)
-
-        self.loadButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Load-Button.png").convert_alpha()
-        self.loadButtonX = int(self.screen.get_width() / 2) - 100
-        self.loadButtonY = int(self.screen.get_height() / 3) + 50
-        self.loadButtonWidth = self.loadButton.get_width()
-        self.loadButtonHeight = self.startButton.get_height()
-        self.loadButtonRect = pygame.Rect(self.loadButtonX, self.loadButtonY, self.loadButtonWidth, self.loadButtonHeight)
-
-        self.settingsButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Settings-Button.png").convert_alpha()
-        self.settingsButtonX = int(self.screen.get_width() / 2) - 100
-        self.settingsButtonY = int(self.screen.get_height() / 3) + 125
-        self.settingsButtonWidth = self.settingsButton.get_width()
-        self.settingsButtonHeight = self.settingsButton.get_height()
-        self.settingsButtonRect = pygame.Rect(self.settingsButtonX, self.settingsButtonY, self.settingsButtonWidth, self.settingsButtonHeight)
-
-        self.exitButton = pygame.image.load("Resources/Interface/Start Menu/Buttons/Exit-Button.png").convert_alpha()
-        self.exitButtonX = int(self.screen.get_width() / 2) - 100
-        self.exitButtonY = int(self.screen.get_height() / 3) + 200
-        self.exitButtonWidth = self.settingsButton.get_width()
-        self.exitButtonHeight = self.exitButton.get_height()
-        self.exitButtonRect = pygame.Rect(self.exitButtonX, self.exitButtonY, self.exitButtonWidth, self.exitButtonHeight)
-        
-        self.buttons = pygame.display.get_surface()
-        self.buttons.blit(self.startButton, (self.startButtonX, self.startButtonY))
-        self.buttons.blit(self.loadButton, (self.loadButtonX, self.loadButtonY))
-        self.buttons.blit(self.settingsButton, (self.settingsButtonX, self.settingsButtonY))
-        self.buttons.blit(self.exitButton, (self.exitButtonX, self.exitButtonY))
-        #self.buttons.blit(self.startButton, (int(self.screen.get_width() / 2)-100, int(self.screen.get_height()/3)-25))
-        #self.startButtonRect = self.startButton.get_rect()
 
     def menu_create(self,img):
         global buttonCheck
