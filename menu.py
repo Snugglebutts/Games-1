@@ -12,29 +12,24 @@ pressed=[False,False,False,False]
 class Menu(object):
     def __init__(self):
         self.buttonXY=[]
+        self.drawButtons=[]
         self.running = True
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.get_surface()
-
         self.resourceFilepath = "Resources/Interface/Start Menu/Background/"
-        self.backgroundImg1 = pygame.image.load(self.resourceFilepath + "Background-sky.png").convert()
-        self.backgroundImg1 = pygame.transform.scale(self.backgroundImg1, (self.screen.get_size()))
         self.backgroundImg2 = pygame.image.load(self.resourceFilepath + "Wizard-Tower.png")
         self.backgroundImg2 = pygame.transform.scale(self.backgroundImg2,
-                                                   (int(self.backgroundImg2.get_width() * .5),
-                                                    int(self.backgroundImg2.get_height() * .5)))
+                                                   (
+                                                    int(self.screen.get_width()/8),
+                                                    int(self.screen.get_height()/2)
+                                                    )
+                                                )
         
-        self.background = pygame.display.get_surface()
-        
-        self.midground = pygame.display.get_surface()
-        self.midgroundImg = pygame.image.load(self.resourceFilepath + "Background-Trees+grass.png")
+        self.midgroundImg = pygame.image.load(self.resourceFilepath + "Background-Trees+sky.png")
         self.midgroundImg = pygame.transform.scale(self.midgroundImg, (self.screen.get_size()))       
 
         self.foregroundImg = pygame.image.load(self.resourceFilepath + "Foreground-Clouds.png")
         self.foregroundImg = pygame.transform.scale(self.foregroundImg, (self.screen.get_size()))
-        self.foregroundImg2 = self.foregroundImg
-        self.foregroundImg3 = self.foregroundImg
-        self.foreground = pygame.display.get_surface()
         self.cloudx = 0
 
     def menu_create(self,img):
@@ -55,13 +50,15 @@ class Menu(object):
         while len(self.buttonXY)>4:
             del self.buttonXY[listO]
             listO+=1
-    def menuAnimation(self):
+  def menuAnimation(self):
         global buttonCheck
-        self.background.blit(self.backgroundImg1, (0,0))
-        self.foreground.blit(self.foregroundImg.convert_alpha(), (self.cloudx, 0))
-        self.foreground.blit(self.foregroundImg2.convert_alpha(), (self.cloudx + self.foregroundImg.get_width(), 0))
-        self.background.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .20))
-        self.midground.blit(self.midgroundImg, (0,0))
+        self.screen.blit(self.midgroundImg, (0,0))
+        for x in range(2):
+            self.screen.blit(self.foregroundImg, (self.cloudx+(self.foregroundImg.get_width()*x), 0))
+        if self.cloudx<0-self.foregroundImg.get_width():
+            self.cloudx=0
+        self.cloudx -= self.foregroundImg.get_width()/450
+        self.screen.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .3))
         if pressed[0]:
             self.menu_create("Resources/Interface/Start Menu/Buttons/Start-Button-Pressed.png")
         else:
@@ -78,11 +75,6 @@ class Menu(object):
             self.menu_create("Resources/Interface/Start Menu/Buttons/Exit-Button-Pressed.png")
         else:
             self.menu_create("Resources/Interface/Start Menu/Buttons/Exit-Button.png")
-        #self.buttons.blit(self.startButton, (self.startButtonRect.x, self.startButtonRect.y))
-        self.cloudx -= 0.5
-
-        if self.cloudx < 0 - self.foregroundImg.get_width():
-            self.cloudx = 0
         buttonCheck=0
 
     def keyListener(self):
