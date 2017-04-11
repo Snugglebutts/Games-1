@@ -15,7 +15,7 @@ from pygame.locals import *
 class Game_Window(object):
     def __init__(self):
         pygame.init()
-        pygame.key.set_repeat(300,25)
+        #pygame.key.set_repeat(300,25)
 
         # Create the window
         self.screen = pygame.display.set_mode((900,600))
@@ -38,9 +38,9 @@ class Game_Window(object):
 
         # Create a game_layer object and play it, make conditional (if we want to skip
         # the main menu or if we go into editor mode)
-
+        print("...")
         game = menu.Menu()
-        game.play()
+        game.run()
         '''
         c = character.Character( cTest.cTest() )
         b = battle.Battle()
@@ -73,6 +73,7 @@ class Game_Window(object):
         # Now we just blank out the screen for effect.
         self.screen.fill((0,0,0))
         pygame.display.update()
+        pygame.quit()
 
 def main():
     print(" ")
@@ -81,4 +82,3 @@ def main():
     the_game.start(*sys.argv)
     pygame.quit()
 
-main()
