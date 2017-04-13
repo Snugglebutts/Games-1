@@ -17,15 +17,19 @@ class Menu(object):
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.get_surface()
         self.resourceFilepath = "Resources/Interface/Start Menu/Background/"
+        self.gobletLogo = pygame.image.load(self.resourceFilepath + "Goblet Logo.png")
+ #       self.gobletLogo = pygame.transform.scale(self.gobletLogo, (self.screen.get_size()))
+        self.backgroundImg1 = pygame.image.load(self.resourceFilepath + "Background-sky.png").convert()
+        self.backgroundImg1 = pygame.transform.scale(self.backgroundImg1, (self.screen.get_size()))
         self.backgroundImg2 = pygame.image.load(self.resourceFilepath + "Wizard-Tower.png")
         self.backgroundImg2 = pygame.transform.scale(self.backgroundImg2,
-                                                   (
+                                                    (
                                                     int(self.screen.get_width()/8),
                                                     int(self.screen.get_height()/2)
                                                     )
                                                 )
         
-        self.midgroundImg = pygame.image.load(self.resourceFilepath + "Background-Trees+sky.png")
+        self.midgroundImg = pygame.image.load(self.resourceFilepath + "Background-Trees+grass.png")
         self.midgroundImg = pygame.transform.scale(self.midgroundImg, (self.screen.get_size()))       
 
         self.foregroundImg = pygame.image.load(self.resourceFilepath + "Foreground-Clouds.png")
@@ -52,13 +56,15 @@ class Menu(object):
             
     def menuAnimation(self):
         global buttonCheck
-        self.screen.blit(self.midgroundImg, (0,0))
+        self.screen.blit(self.backgroundImg1, (0,0))
+        self.screen.blit(self.gobletLogo, ((self.screen.get_width() * .5) - 200, self.screen.get_height() *.1))
         for x in range(2):
             self.screen.blit(self.foregroundImg, (self.cloudx+(self.foregroundImg.get_width()*x), 0))
         if self.cloudx<0-self.foregroundImg.get_width():
             self.cloudx=0
-        self.cloudx -= self.foregroundImg.get_width()/450
-        self.screen.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .3))
+        self.cloudx -= self.foregroundImg.get_width()/600
+        self.screen.blit(self.backgroundImg2,(self.screen.get_width() * .7, self.screen.get_height() * .15))
+        self.screen.blit(self.midgroundImg, (0,0))
         if pressed[0]:
             self.menu_create("Resources/Interface/Start Menu/Buttons/Start-Button-Pressed.png")
         else:
@@ -127,13 +133,9 @@ class Menu(object):
     def run(self):
         while self.running:
             case = None
-            #self.background.blit(self.backgroundImg1, (0,0))
-            #self.background.blit(self.backgroundImg2,(self.screen.get_width() * .75, self.screen.get_height() * .20))
-            #self.midground.blit(self.midgroundImg, (0,0))
             self.menuAnimation()
 
             self.keyListener()
-            #self.buttons.blit(self.startButton, (int(self.screen.get_width() / 2)-100, int(self.screen.get_height()/3)-25))
             pygame.display.update()
             self.clock.tick(60)
 
